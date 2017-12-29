@@ -1,0 +1,78 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'maven-publish'
+
+ext {
+	
+	//发布到仓库用户名
+    publishUserName = "admin"
+    //发布到仓库地址
+    publishUserPassword = "XXXXX"
+    //仓库地址
+    publishURL="http://123.207.42.166:8089/nexus/content/repositories/snapshots/"
+    
+    apiBaseJarName = "httpclient-zfy"
+    apiBaseJarVersion = '0.0.1-SNAPSHOT'
+    builtBy="gradle 3.5"
+
+
+}
+repositories {
+	maven { url 'http://123.207.42.166:8089/nexus/content/groups/public/' }
+}
+
+group = 'com.zfy.component.httpclient'
+version = '0.0.1' + "." + new Date().format("yyMMdd")
+sourceCompatibility = 1.8
+
+dependencies {
+
+	compile('com.alibaba:fastjson:1.2.27')
+	compile('org.apache.httpcomponents:httpclient:4.5.4')
+	compile('commons-logging:commons-logging:1.2')
+}
+
+task apiBaseJar(type:Jar){
+     version apiBaseJarVersion
+     baseName apiBaseJarName
+     from sourceSets.main.output
+     //destinationDir file("$buildDir/api-libs")
+     includes ['com/zfy/component/httpclient/**']
+     manifest {
+         attributes 'packageName': apiBaseJarName//, 'Built-By': builtBy,'Built-date': new Date().format('yyyy-MM-dd HH:mm:ss'),'Manifest-Version':version
+     }
+ }
+//打包源码
+ task apiBaseSourceJar(type:Jar){
+     version apiBaseJarVersion
+     baseName apiBaseJarName
+     classifier "sources"
+     from sourceSets.main.allSource
+     //destinationDir file("$buildDir/api-libs")
+     includes ['com/zfy/component/httpclient/**']
+     manifest {
+         attributes 'packageName': apiBaseJarName+'-sources'//, 'Built-By': builtBy,'Built-date': new Date().format('yyyy-MM-dd HH:mm:ss'),'Manifest-Version':version
+     }
+ }
+ //上传jar包
+ publishing {
+     publications {
+         publishing.publications.create('apiBase', MavenPublication) {
+             groupId 'com.zfy.component.httpclient'
+             artifactId apiBaseJarName
+             version apiBaseJarVersion
+             //同时上传class包和源码包
+             artifacts = [apiBaseJar,apiBaseSourceJar]
+         }
+     }
+     repositories {
+         maven {
+             url  publishURL
+             credentials {
+                 username = publishUserName
+                 password = publishUserPassword
+             }
+         }
+     }
+ }
+

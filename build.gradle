@@ -7,10 +7,9 @@ ext {
 	//发布到仓库用户名
     publishUserName = "admin"
     //发布到仓库地址
-    publishUserPassword = "XXXXX"
+    publishUserPassword = "admin123"
     //仓库地址
-    publishURL="http://123.207.42.166:8089/nexus/content/repositories/snapshots/"
-    
+    publishURL="http://123.207.42.166:8089/nexus/content/repositories/releases/"  //仓库地址
     apiBaseJarName = "httpclient-zfy"
     apiBaseJarVersion = '0.0.1-SNAPSHOT'
     builtBy="gradle 3.5"
@@ -18,7 +17,7 @@ ext {
 
 }
 repositories {
-	maven { url 'http://123.207.42.166:8089/nexus/content/groups/public/' }
+	maven { url 'http://192.168.0.150:8089/nexus/content/groups/public/' }
 }
 
 group = 'com.zfy.component.httpclient'
